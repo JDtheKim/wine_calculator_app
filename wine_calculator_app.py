@@ -58,4 +58,28 @@ if submitted_additives:
     st.markdown(f"🔒 **소르빈산염**: `{sorbate:.2f} g`")
 
 # -----------------------------------
+# SECTION 3: 알코올 도수 온도 보정기
+# -----------------------------------
+st.header("🌡️ 알코올 도수 온도 보정기")
+
+with st.form("alcohol_temp_form"):
+    measured_abv = st.number_input("측정 알코올 도수 (%ABV)", min_value=0.0, max_value=100.0, value=12.0, step=0.1)
+    temp_c = st.number_input("측정 온도 (°C)", min_value=0.0, max_value=40.0, value=25.0, step=0.5)
+    submitted_alcohol = st.form_submit_button("도수 보정")
+
+if submitted_alcohol:
+    # 단순 온도 보정 공식 (근사)
+    correction = 0.0
+
+    if temp_c < 20:
+        correction = round((20 - temp_c) * 0.1 + 0.2, 2)  # 상승 보정
+    elif temp_c > 20:
+        correction = round(-1 * ((temp_c - 20) * 0.1 + 0.2), 2)  # 하강 보정
+
+    corrected_abv = measured_abv + correction
+    st.success(f"✅ 보정된 알코올 도수: **{corrected_abv:.2f}% ABV** (20°C 기준)")
+    st.caption(f"(보정값: {correction:+.2f} 적용됨)")
+
+
+# -----------------------------------
 st.caption("🔧 참고: 기준값은 일반적인 홈브루잉 가이드 기준으로 계산됨.")
